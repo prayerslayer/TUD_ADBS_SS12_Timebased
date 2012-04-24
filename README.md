@@ -1,4 +1,3 @@
-TUD_ADBS_SS12_Timebased
-=======================
+#TUD ADBSÜ SS12
 
-Entwicklung des zeitbasierten Sampling Algorithmus für die ADBS Übung im Sommersemester 2012 an der TU Dresden.
+Hier entsteht ein zeitbasierter Samplingalgorithmus. Priority Sampling, Bounded-space Priority Sampling oder ein anderer.
