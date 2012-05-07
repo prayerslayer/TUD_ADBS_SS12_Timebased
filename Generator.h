@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <boost/thread/thread.hpp>
 #include "Element.h"
+#include "GeneratorLoop.h"
 #include "Sampler.h"
 using namespace std;
 
@@ -21,6 +23,8 @@ class Generator {
 		bool isRunning;
 		vector<string> contents;
 		Sampler* sampler;
+		GeneratorLoop loop;
+		boost::thread* loopthread;
 };
 
 #endif

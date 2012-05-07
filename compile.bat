@@ -1,0 +1,1 @@
+g++ *.h *.cpp -I boost_1_49_0 -std=c++0x -o main && main

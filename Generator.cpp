@@ -1,9 +1,12 @@
 #include "Generator.h"
 #include "Sampler.h"
+#include "GeneratorLoop.h"
 #include <ctime>
 #include <string>
+#include <math.h>
 #include <cstdlib>
 #include <iostream>
+#include <boost/thread/thread.hpp>
 
 using namespace std;
 
@@ -28,6 +31,7 @@ Generator::Generator() {
 	{
 		cout << "Content " << i << ": " << contents.at(i) << endl;
 	}
+	GeneratorLoop loop();
 }
 
 // setter
@@ -40,27 +44,13 @@ void Generator::Stop() {
 	if (isRunning) {
 		isRunning = false;
 	}
+	loopthread->join();
 }
 
 void Generator::Start() {
 	if (isRunning)
 		return;
 	isRunning = true;
-	auto loop_handle = async(DoWork);
-	DoWork();
+	loopthread = new boost::thread(loop);
 }
 
-void Generator::DoWork() {
-	while (isRunning) {
-		Wait(1);
-		cout << "waiting..." << endl;
-	}
-}
-
-void Generator::Wait(int seconds) {
-	clock_t endwait;
-	endwait = clock () + seconds * CLOCKS_PER_SEC ;
-	while (clock() < endwait) {
-		//do nothing
-	}
-}

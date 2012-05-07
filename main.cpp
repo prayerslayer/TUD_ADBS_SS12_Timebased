@@ -25,5 +25,6 @@ int main() {
 	generator->Start();
 	cout << "Generator fertig" << endl;
 	generator->Stop();
+	
 	return 0;
 }
