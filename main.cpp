@@ -21,4 +21,9 @@ int main() {
 	auto sampler = new Sampler(5, 60*1000);
 	auto generator =  new Generator();
 	generator->SetSampler(sampler);
+	cout << "Generator start" << endl;
+	generator->Start();
+	cout << "Generator fertig" << endl;
+	generator->Stop();
+	return 0;
 }
