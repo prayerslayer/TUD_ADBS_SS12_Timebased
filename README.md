@@ -5,13 +5,15 @@ Hier entsteht eine Implementierung von Bounded-Space Priority Sampling Without R
 ## Status
 
 * Interfaces spezifiziert
+* Generator implementiert
+* Schnittstellen für Sampler implementiert
+* Rudimentäre Kommandozeile ist vorhanden
 
 ## Fragen
 
-* Der Sampler für *k*>1 mehrere SingleSampler parallel laufen lassen muss. Was passiert genau, wenn ein Element in den Sampler hinzugefügt wird? Wird es auf die SingleSampler verteilt? Werden die abwechselnd oder zufällig gefüttert?...
+* Wie funktioniert das, wenn die Gültigkeit eines Elements abläuft? Wie soll das umgesetzt werden?
 
 ## TODO
 
-* Generator implementieren
-* SingleSampler implementieren
-* Sampler implementieren
+* Logik im SingleSampler implementieren
+* ExpireElement() irgendwie irgendwo umsetzen
