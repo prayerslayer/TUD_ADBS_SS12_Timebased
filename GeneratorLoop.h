@@ -1,13 +1,21 @@
 #ifndef GENERATOR_LOOP_H
 #define GENERATOR_LOOP_H
 
+#include "Sampler.h"
+#include "Element.h"
+#include <boost/thread/thread.hpp>
+#include <boost/thread/mutex.hpp>
+#include <vector>
+#include <string>
+
 class GeneratorLoop {
 	public:
-		GeneratorLoop(int time);
+		GeneratorLoop(Sampler * s, boost::mutex* mutex);
 		void operator()();
 	private:
-		int secs_to_wait;
-		void Wait(int seconds);
+		Sampler* sampler;
+		boost::mutex* lock;
+		vector<string> contents;
 };
 
 #endif

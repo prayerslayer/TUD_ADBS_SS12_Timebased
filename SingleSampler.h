@@ -7,10 +7,12 @@
 class SingleSampler {
 	public:
 		SingleSampler(long int ws);
-		void AddElement(Element e);	
-		
+		void Add(Element* e);	
+		Element* GetSample();
 	private:
 		long int window_size;
+		Element* candidate;
+		Element* test;
 };
 
 #endif

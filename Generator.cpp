@@ -1,11 +1,13 @@
 #include "Generator.h"
 #include "Sampler.h"
 #include "GeneratorLoop.h"
+#include "Element.h"
 #include <ctime>
 #include <string>
 #include <math.h>
 #include <cstdlib>
 #include <iostream>
+#include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 
 using namespace std;
@@ -13,25 +15,7 @@ using namespace std;
 //constructor
 
 Generator::Generator() {
-	srand(time(NULL));
-	cout << "initializing generator" << endl;
-	isRunning = false;
-	contents = vector<string>(10);
-	contents[0] = "HTTP";
-	contents[1] = "FTP";
-	contents[2] = "SMTP";
-	contents[3] = "TELNET";
-	contents[4] = "IMAP";
-	contents[5] = "POP3";
-	contents[6] = "TCP";
-	contents[7] = "UDP";
-	contents[8] = "RIP";
-	contents[9] = "ICMP";
-	for (int i = 0; i < contents.size(); ++i)
-	{
-		cout << "Content " << i << ": " << contents.at(i) << endl;
-	}
-	GeneratorLoop loop();
+	mutex = new boost::mutex();
 }
 
 // setter
@@ -40,21 +24,29 @@ void Generator::SetSampler(Sampler* s) {
 	sampler = s;
 }
 
+void Generator::Pause() {
+	//TODO should be something else
+	Stop();
+}
+
 void Generator::Stop() {
-	if (isRunning) {
-		isRunning = false;
-	}
+	mutex->unlock();
+	worker.join();
 }
 
 void Generator::Start() {
-	if (isRunning)
-		return;
-	isRunning = true;
-	while (isRunning) {
-		GeneratorLoop loop(1);
-		boost::thread worker(loop);
-		cout << "waiting for loop " << endl;
-		worker.join();
+	if (mutex->try_lock()) {
+		cout << "gonna start worker thread" << endl;
+		auto loop = GeneratorLoop(sampler, mutex);
+		worker = boost::thread(loop);
 	}
+	else
+		cout << "could not start worker thread (mutex is locked)" << endl;
 }
 
+bool Generator::IsRunning() {
+	bool runs = mutex->try_lock();
+	if (runs)
+		mutex->unlock();
+	return runs;
+}

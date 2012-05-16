@@ -15,8 +15,10 @@
 #include "Element.h"
 #include "Generator.h"
 #include "Sampler.h"
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/thread/thread.hpp>
 
-//using namespace std;
+using namespace std;
 
 int main() {
 	auto sampler = new Sampler(5, 60*1000);
@@ -24,8 +26,20 @@ int main() {
 	generator->SetSampler(sampler);
 	cout << "Generator start" << endl;
 	generator->Start();
-	cout << "Generator fertig" << endl;
-	generator->Stop();
-	
+	cout << "Please enter a command [ pause | stop | start | exit ]" << endl;
+	string command = "";
+	while (command.compare("exit")!=0) {
+		cin >> command;
+		if (command.compare("stop")==0) {
+			generator->Stop();
+		}
+		else if (command.compare("start")==0) {
+			if (!generator->IsRunning())
+				generator->Start();
+		}
+		else if (command.compare("pause")==0) {
+			generator->Pause();
+		}
+	}
 	return 0;
 }

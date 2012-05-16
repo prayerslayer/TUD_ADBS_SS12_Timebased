@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 #include "Element.h"
 #include "GeneratorLoop.h"
@@ -11,17 +12,15 @@ using namespace std;
 
 class Generator {
 	public:
+		boost::mutex* mutex;
 		Generator();
 		void Start();
 		void Pause();
-		void DoWork();
 		void Stop();
+		bool IsRunning();
 		void SetSampler(Sampler* s);
 	private:
-		Element CreateElement();
-		void Wait(int seconds);
-		bool isRunning;
-		vector<string> contents;
+		boost::thread worker;
 		Sampler* sampler;
 };
 
