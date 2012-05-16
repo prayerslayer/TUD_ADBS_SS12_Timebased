@@ -5,17 +5,12 @@
 #include <string>
 using namespace std;
 
-GeneratorLoop::GeneratorLoop() {
-	
-
+GeneratorLoop::GeneratorLoop(int wait) {
+	secs_to_wait = wait;
 }
 
 void GeneratorLoop::operator()() {	
-	while(true) {
-		int secs = rand() % 100000;
-		cout << "waiting... " << secs << " seconds" << endl;
-		Wait(1);	
-	}
+	Wait(secs_to_wait);
 }
 
 void GeneratorLoop::Wait(int seconds) {

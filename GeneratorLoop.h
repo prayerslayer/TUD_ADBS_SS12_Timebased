@@ -3,9 +3,10 @@
 
 class GeneratorLoop {
 	public:
-		GeneratorLoop();
+		GeneratorLoop(int time);
 		void operator()();
 	private:
+		int secs_to_wait;
 		void Wait(int seconds);
 };
 

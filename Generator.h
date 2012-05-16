@@ -23,8 +23,6 @@ class Generator {
 		bool isRunning;
 		vector<string> contents;
 		Sampler* sampler;
-		GeneratorLoop loop;
-		boost::thread* loopthread;
 };
 
 #endif

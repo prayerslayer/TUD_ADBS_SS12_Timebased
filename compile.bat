@@ -1,1 +1,1 @@
-g++ *.h *.cpp -I boost_1_49_0 -std=c++0x -o main && main
+g++ *.h *.cpp -I boost_1_49_0 -Lboost_1_49_0/boost/stage/lib -lboost_thread-mgw46-mt-d-1_49 -std=c++0x -o main && main 

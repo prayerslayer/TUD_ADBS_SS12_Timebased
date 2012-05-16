@@ -44,13 +44,17 @@ void Generator::Stop() {
 	if (isRunning) {
 		isRunning = false;
 	}
-	loopthread->join();
 }
 
 void Generator::Start() {
 	if (isRunning)
 		return;
 	isRunning = true;
-	loopthread = new boost::thread(loop);
+	while (isRunning) {
+		GeneratorLoop loop(1);
+		boost::thread worker(loop);
+		cout << "waiting for loop " << endl;
+		worker.join();
+	}
 }
 
