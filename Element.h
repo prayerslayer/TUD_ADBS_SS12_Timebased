@@ -6,14 +6,16 @@ using namespace std;
 
 class Element {
 	public:
-		Element(string content);
+		Element(int identity, string content);
 		long int GetTimestamp();
+		int GetId();
 		string GetContent();
 		double GetPriority();
 		void SetTimestamp(long int timestamp);
 		void SetContent(string content);
 		void SetPriority(double priority);
 	private:
+		int id;
 		double priority;
 		string content;
 		long int timestamp;

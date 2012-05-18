@@ -22,7 +22,9 @@ vector<Element *> Sampler::GetSample() {
 	auto sample = vector<Element *>();
 	for (int i = 0; i < k; ++i)
 	{
-		sample.push_back(singlesamplers[i]->GetSample());
+		if ( singlesamplers[i]->GetSample() != NULL ) {
+			sample.push_back(singlesamplers[i]->GetSample());	
+		}
 	}
 	cout << "sample size" << sample.size() << endl;
 	return sample;

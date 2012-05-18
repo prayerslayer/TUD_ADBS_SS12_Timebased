@@ -11,6 +11,7 @@ using namespace std;
 GeneratorLoop::GeneratorLoop(Sampler* s, boost::mutex* mutex) {
 	srand(time(NULL));
 	sampler = s;
+	current_id = 0;
 	lock = mutex;
 	cout << "initializing generator" << endl;
 	contents = vector<string>(10);
@@ -33,9 +34,10 @@ GeneratorLoop::GeneratorLoop(Sampler* s, boost::mutex* mutex) {
 void GeneratorLoop::operator()() {
 	cout << "starting work" << endl;
 	while ( !(lock->try_lock()) ) {
-		boost::this_thread::sleep(boost::posix_time::seconds(rand()%10+1));
 		cout << "zzzzzzzz" << endl;
-		Element mew = Element(contents[rand()%10]);
+		boost::this_thread::sleep(boost::posix_time::seconds(rand()%10+1));
+		Element mew = Element(current_id, contents[rand()%10]);
+		current_id += 1;
 		sampler->Add(mew);
 	}
 	lock->unlock();

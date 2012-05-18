@@ -16,6 +16,7 @@ class GeneratorLoop {
 		Sampler* sampler;
 		boost::mutex* lock;
 		vector<string> contents;
+		int current_id;
 };
 
 #endif

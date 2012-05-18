@@ -8,7 +8,8 @@ using namespace std;
 
 //constructor
 
-Element::Element(string initial_content) {
+Element::Element(int identity, string initial_content) {
+	id = identity;
 	content = initial_content;
 	timestamp = GetCurrentTimeInMilli();
 	priority = GeneratePriority();
@@ -50,4 +51,8 @@ double Element::GetPriority() {
 
 long int Element::GetTimestamp() {
 	return timestamp;
+}
+
+int Element::GetId() {
+	return id;
 }
