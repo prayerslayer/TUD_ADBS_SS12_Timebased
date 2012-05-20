@@ -10,7 +10,7 @@ using namespace std;
 class Sampler {
 	public:
 		Sampler(int samplesize, long int ws);
-		void Add(Element e);
+		void Add(Element* e);
 		vector<Element *> GetSample();
 	private:
 		int k;

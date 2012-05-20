@@ -22,18 +22,20 @@ vector<Element *> Sampler::GetSample() {
 	auto sample = vector<Element *>();
 	for (int i = 0; i < k; ++i)
 	{
-		if ( singlesamplers[i]->GetSample() != NULL ) {
-			sample.push_back(singlesamplers[i]->GetSample());	
+		Element* single_sample = singlesamplers[i]->GetSample();
+		if (  single_sample != NULL ) {
+			cout << i << " returned " << single_sample->GetContent() << endl;
+			sample.push_back(single_sample);	
 		}
 	}
 	cout << "sample size" << sample.size() << endl;
 	return sample;
 }
 
-void Sampler::Add(Element element) {
-	cout << "added element " << element.GetContent() << " (p=" << element.GetPriority() << ")" << endl;
+void Sampler::Add(Element* element) {
+	cout << "added element " << element->GetContent() << " (p=" << element->GetPriority() << ")" << endl;
 	for (int i = 0; i < k; ++i)
 	{
-		singlesamplers[i]->Add(&element);
+		singlesamplers[i]->Add(element);
 	}
 }

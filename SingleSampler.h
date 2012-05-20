@@ -15,8 +15,8 @@ class SingleSampler {
 		long int window_size;
 		Element* candidate;
 		Element* test;
-		boost::thread* expire_candidate;
-		boost::thread* expire_test;
+		boost::thread expire_candidate;
+		boost::thread expire_test;
 };
 
 #endif
