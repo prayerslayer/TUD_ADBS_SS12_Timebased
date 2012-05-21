@@ -7,11 +7,13 @@
 
 class SingleSampler {
 	public:
-		SingleSampler(long int ws);
+		SingleSampler(int id, long int ws);
 		void Add(Element* e);	
-		void ExpireElement(Element* e, bool is_candidate);
+		void ExpireElement(Element** e, bool is_candidate);
 		Element* GetSample();
+		int GetIdentity();
 	private:
+		int identity;
 		long int window_size;
 		Element* candidate;
 		Element* test;

@@ -21,7 +21,9 @@
 using namespace std;
 
 int main() {
-	auto sampler = new Sampler(5, 5*1000);
+	int k = 5;
+	long int ws = 5000;
+	auto sampler = new Sampler(k, ws);
 	auto generator =  new Generator();
 	generator->SetSampler(sampler);
 	cout << "Generator start" << endl;

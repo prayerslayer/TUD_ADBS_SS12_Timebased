@@ -12,7 +12,7 @@ Sampler::Sampler(int samplesize, long int ws) {
 	singlesamplers = vector<SingleSampler *>(k);
 	for (int i = 0; i < k; ++i)
 	{
-		auto s = new SingleSampler(window_size);
+		auto s = new SingleSampler(i, window_size);
 		singlesamplers[i] = s;
 	}
 	cout << "sampler created with k=" << k << endl;
@@ -24,11 +24,10 @@ vector<Element *> Sampler::GetSample() {
 	{
 		Element* single_sample = singlesamplers[i]->GetSample();
 		if (  single_sample != NULL ) {
-			cout << i << " returned " << single_sample->GetContent() << endl;
 			sample.push_back(single_sample);	
 		}
 	}
-	cout << "sample size" << sample.size() << endl;
+	cout << "sample size: " << sample.size() << endl;
 	return sample;
 }
 
