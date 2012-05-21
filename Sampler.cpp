@@ -9,6 +9,8 @@ using namespace std;
 Sampler::Sampler(int samplesize, long int ws) {
 	window_size = ws;
 	k = samplesize;
+	generator.seed(static_cast<unsigned int>(time(0)));
+	distribution = boost::random::uniform_int_distribution<>(0, 10000);
 	singlesamplers = vector<SingleSampler *>(k);
 	for (int i = 0; i < k; ++i)
 	{
@@ -18,12 +20,12 @@ Sampler::Sampler(int samplesize, long int ws) {
 	cout << "sampler created with k=" << k << endl;
 }
 
-vector<Element *> Sampler::GetSample() {
-	auto sample = vector<Element *>();
+vector<Element> Sampler::GetSample() {
+	auto sample = vector<Element>();
 	for (int i = 0; i < k; ++i)
 	{
-		Element* single_sample = singlesamplers[i]->GetSample();
-		if (  single_sample != NULL ) {
+		Element single_sample = singlesamplers[i]->GetSample();
+		if (  !single_sample.IsExpired() ) {
 			sample.push_back(single_sample);	
 		}
 	}
@@ -31,10 +33,16 @@ vector<Element *> Sampler::GetSample() {
 	return sample;
 }
 
-void Sampler::Add(Element* element) {
-	cout << "added element " << element->GetContent() << " (p=" << element->GetPriority() << ")" << endl;
+void Sampler::Add(string* content) {
+	cout << "added element " << *content << endl;
 	for (int i = 0; i < k; ++i)
 	{
+		Element element(content);
+		element.SetPriority(GetRandom());
 		singlesamplers[i]->Add(element);
 	}
+}
+
+double Sampler::GetRandom() {
+	return (double)distribution(generator)/(double)10000;
 }

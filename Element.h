@@ -6,20 +6,21 @@ using namespace std;
 
 class Element {
 	public:
-		Element(int identity, string content);
+		Element();
+		Element(string* content);
 		long int GetTimestamp();
-		int GetId();
-		string GetContent();
+		string* GetContent();
 		double GetPriority();
+		bool IsExpired();
 		void SetTimestamp(long int timestamp);
-		void SetContent(string content);
+		void SetContent(string* content);
 		void SetPriority(double priority);
+		void SetExpired(bool expired);
 	private:
-		int id;
 		double priority;
-		string content;
+		string* content;
 		long int timestamp;
-		double GeneratePriority();
+		bool expired;
 		long int GetCurrentTimeInMilli();
 };
 

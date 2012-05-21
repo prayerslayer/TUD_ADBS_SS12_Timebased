@@ -29,23 +29,22 @@ GeneratorLoop::GeneratorLoop(Sampler* s, boost::mutex* mutex) {
 	{
 		cout << "Content " << i << ": " << contents.at(i) << endl;
 	}
-	created_elements = vector<Element>();
+	created_elements = vector<string>();
 }
 
 void GeneratorLoop::operator()() {
 	cout << "starting work" << endl;
 	while ( !(lock->try_lock()) ) {
 		cout << "zzzzzzzz" << endl;
-		boost::this_thread::sleep(boost::posix_time::seconds(rand()%20+1));
-		Element mew = Element(current_id, contents[rand()%10]);
-		current_id += 1;
+		boost::this_thread::sleep(boost::posix_time::seconds(rand()%10+1));
+		string mew = contents[rand()%10];
 		created_elements.push_back(mew); //prevent garbage collector from eating the element
 		sampler->Add(&created_elements[created_elements.size()-1]);
-		vector<Element*> sample = sampler->GetSample();
+		vector<Element> sample = sampler->GetSample();
 		if (sample.size() > 0) {
 			for (int i = 0; i < sample.size(); ++i)
 			{
-				cout << " === " << sample[i]->GetContent() << " === " << endl;
+				cout << " === " << *(sample[i].GetContent()) << " === " << endl;
 			}
 		}
 		else

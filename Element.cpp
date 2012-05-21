@@ -8,18 +8,21 @@ using namespace std;
 
 //constructor
 
-Element::Element(int identity, string initial_content) {
-	id = identity;
+Element::Element() {
+	content = NULL;
+	timestamp = 0;
+	expired = true;
+	priority = 0;
+}
+
+Element::Element(string* initial_content) {
 	content = initial_content;
 	timestamp = GetCurrentTimeInMilli();
-	priority = GeneratePriority();
+	expired = false;
+	priority = 0;
 }
 
 //member functions
-
-double Element::GeneratePriority() {
-	return ((double)rand()/(double)RAND_MAX);
-}
 
 long int Element::GetCurrentTimeInMilli() {
 	return time(NULL);
@@ -27,7 +30,7 @@ long int Element::GetCurrentTimeInMilli() {
 
 //setters
 
-void Element::SetContent(string c) {
+void Element::SetContent(string* c) {
 	content = c;
 }
 
@@ -39,9 +42,13 @@ void Element::SetTimestamp(long int ts) {
 	timestamp = ts;
 }
 
+void Element::SetExpired(bool time_is_over) {
+	expired = time_is_over;
+}
+
 //getters
 
-string Element::GetContent() {
+string* Element::GetContent() {
 	return content;
 }
 
@@ -53,6 +60,6 @@ long int Element::GetTimestamp() {
 	return timestamp;
 }
 
-int Element::GetId() {
-	return id;
+bool Element::IsExpired() {
+	return expired;
 }
