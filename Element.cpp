@@ -28,6 +28,15 @@ long int Element::GetCurrentTimeInMilli() {
 	return time(NULL);
 }
 
+bool Element::operator==(Element &other) {
+	// Compare the values, and return a bool result.
+	return timestamp == other.GetTimestamp();
+}
+
+bool Element::operator!=(Element &other) {
+	return timestamp != other.GetTimestamp();
+}
+
 //setters
 
 void Element::SetContent(string* c) {

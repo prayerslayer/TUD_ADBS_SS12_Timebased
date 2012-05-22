@@ -16,6 +16,8 @@ class Element {
 		void SetContent(string* content);
 		void SetPriority(double priority);
 		void SetExpired(bool expired);
+		bool operator==(Element &other);
+		bool operator!=(Element &other);
 	private:
 		double priority;
 		string* content;
