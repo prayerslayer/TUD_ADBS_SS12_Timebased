@@ -1,6 +1,6 @@
 #TUD ADBSÜ SS12
 
-Hier entsteht eine Implementierung von Bounded-Space Priority Sampling Without Replacements (BPSWOR) für die Übung "Architektur von Datenbanksystemen" im Sommersemester 2012 an der Technischen Universität Dresden.
+Hier entsteht eine Implementierung von Bounded-Space Priority Sampling (mit und ohne Replacement) für die Übung "Architektur von Datenbanksystemen" im Sommersemester 2012 an der Technischen Universität Dresden.
 
 ## Status
 
@@ -11,9 +11,11 @@ Hier entsteht eine Implementierung von Bounded-Space Priority Sampling Without R
 
 ## Fragen
 
-* Wie funktioniert das, wenn die Gültigkeit eines Elements abläuft? Wie soll das umgesetzt werden?
+* Wie am Besten Sets verwenden?
 
 ## TODO
 
-* Logik im SingleSampler implementieren
-* ExpireElement() irgendwie irgendwo umsetzen
+* Debuggen (NullPointer bei GetContent() für BPSWR)
+* BPSWOR implementieren
+* Kommandozeile verschönern
+* (Alles mit template classes refactoren)
