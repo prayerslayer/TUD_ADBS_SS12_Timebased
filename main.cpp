@@ -21,6 +21,7 @@
 using namespace std;
 
 int main() {
+
 	int k = 5;
 	long int ws = 5000;
 	auto sampler = new Sampler(k, ws);

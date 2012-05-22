@@ -8,16 +8,16 @@ class Element {
 	public:
 		Element();
 		Element(string* content);
-		long int GetTimestamp();
-		string* GetContent();
-		double GetPriority();
-		bool IsExpired();
+		long int GetTimestamp() const;
+		string* GetContent() const;
+		double GetPriority() const;
+		bool IsExpired() const;
 		void SetTimestamp(long int timestamp);
 		void SetContent(string* content);
 		void SetPriority(double priority);
 		void SetExpired(bool expired);
-		bool operator==(Element &other);
-		bool operator!=(Element &other);
+		bool operator==(const Element &other) const;
+		bool operator!=(const Element &other) const;
 	private:
 		double priority;
 		string* content;

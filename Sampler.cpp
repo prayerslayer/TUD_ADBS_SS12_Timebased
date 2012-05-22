@@ -26,8 +26,11 @@ vector<Element> Sampler::GetSample() {
 	{
 		Element single_sample = singlesamplers[i]->GetSample();
 		if (  !single_sample.IsExpired() ) {
-			sample.push_back(single_sample);	
+			if ( find(sample.begin(), sample.end(), single_sample) == sample.end() ) //TODO Geht nicht?
+				sample.push_back(single_sample);	
 		}
+		else
+			cout << "sample expired" << endl;
 	}
 	cout << "sample size: " << sample.size() << endl;
 	return sample;

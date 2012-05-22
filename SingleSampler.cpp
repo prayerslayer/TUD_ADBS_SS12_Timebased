@@ -71,14 +71,12 @@ Element SingleSampler::GetSample() {
 		if (!test.IsExpired()) {
 			// cout << "test not null..." << endl;
 			//check if priority is higher and return
-			return candidate.GetPriority() > test.GetPriority() ? candidate : NULL;
+			Element returnee = candidate;
+			if (candidate.GetPriority() < test.GetPriority())
+				returnee.SetExpired(true);
+			return returnee;
 		}
-		// cout << "test null" << endl;
-		//if there is no test item, return candidate
-		return candidate;
 	}
-	// cout << "no candidate" << endl;
-	//if there is no candidate... well... 
 	return candidate;
 }
 

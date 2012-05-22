@@ -28,13 +28,13 @@ long int Element::GetCurrentTimeInMilli() {
 	return time(NULL);
 }
 
-bool Element::operator==(Element &other) {
+bool Element::operator==(const Element &other) const {
 	// Compare the values, and return a bool result.
-	return timestamp == other.GetTimestamp();
+	return (timestamp == other.GetTimestamp());
 }
 
-bool Element::operator!=(Element &other) {
-	return timestamp != other.GetTimestamp();
+bool Element::operator!=(const Element &other) const {
+	return false;
 }
 
 //setters
@@ -57,18 +57,18 @@ void Element::SetExpired(bool time_is_over) {
 
 //getters
 
-string* Element::GetContent() {
+string* Element::GetContent() const {
 	return content;
 }
 
-double Element::GetPriority() {
+double Element::GetPriority() const {
 	return priority;
 }
 
-long int Element::GetTimestamp() {
+long int Element::GetTimestamp() const {
 	return timestamp;
 }
 
-bool Element::IsExpired() {
+bool Element::IsExpired() const {
 	return expired;
 }
