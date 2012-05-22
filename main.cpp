@@ -14,6 +14,7 @@
 #include <string>
 #include "Element.h"
 #include "Generator.h"
+#include "ISampler.h"
 #include "BPSWR_Sampler.h"
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/thread/thread.hpp>

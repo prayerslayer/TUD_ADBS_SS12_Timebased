@@ -1,5 +1,6 @@
 #include "GeneratorLoop.h"
 #include "Element.h"
+#include "ISampler.h"
 #include <boost/thread/thread.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <ctime>
@@ -8,7 +9,7 @@
 #include <string>
 using namespace std;
 
-GeneratorLoop::GeneratorLoop(BPSWR_Sampler* s, boost::mutex* mutex) {
+GeneratorLoop::GeneratorLoop(ISampler* s, boost::mutex* mutex) {
 	srand(time(NULL));
 	sampler = s;
 	current_id = 0;

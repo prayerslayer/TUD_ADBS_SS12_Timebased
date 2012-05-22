@@ -4,11 +4,12 @@
 #include "Element.h"
 #include <vector>
 #include <string>
+#include "ISampler.h"
 #include "BPSWR_SingleSampler.h"
 
 using namespace std;
 
-class BPSWR_Sampler {
+class BPSWR_Sampler : public ISampler {
 	public:
 		BPSWR_Sampler(int samplesize, long int ws);
 		void Add(string* e);
