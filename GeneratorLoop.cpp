@@ -8,7 +8,7 @@
 #include <string>
 using namespace std;
 
-GeneratorLoop::GeneratorLoop(Sampler* s, boost::mutex* mutex) {
+GeneratorLoop::GeneratorLoop(BPSWR_Sampler* s, boost::mutex* mutex) {
 	srand(time(NULL));
 	sampler = s;
 	current_id = 0;

@@ -1,4 +1,4 @@
-#include "SingleSampler.h"
+#include "BPSWR_SingleSampler.h"
 #include "Element.h"
 #include <iostream>
 #include <boost/thread/thread.hpp>
@@ -11,7 +11,7 @@
 
 using namespace std;
 
-SingleSampler::SingleSampler(int id, long int ws) {
+BPSWR_SingleSampler::BPSWR_SingleSampler(int id, long int ws) {
 	window_size = ws;
 	candidate = NULL;
 	test = NULL;
@@ -21,7 +21,7 @@ SingleSampler::SingleSampler(int id, long int ws) {
 
 
 
-void SingleSampler::ExpireElement(Element* e, bool is_candidate) {
+void BPSWR_SingleSampler::ExpireElement(Element* e, bool is_candidate) {
 	cout << "[" << identity << "] element " << *(e->GetContent()) << " expires in " << window_size << " ms" << endl;
 	int timestamp_copy = e->GetTimestamp();
 	//wait until window is over
@@ -37,7 +37,7 @@ void SingleSampler::ExpireElement(Element* e, bool is_candidate) {
 			//candidate becomes test item
 			test = candidate; 
 			candidate.SetExpired(true);
-			boost::function<void (Element*, bool)> expirer = boost::bind(&SingleSampler::ExpireElement, this, _1, _2);
+			boost::function<void (Element*, bool)> expirer = boost::bind(&BPSWR_SingleSampler::ExpireElement, this, _1, _2);
 			expire_test = boost::thread(expirer, &test, false);
 		}		
 		else {
@@ -48,7 +48,7 @@ void SingleSampler::ExpireElement(Element* e, bool is_candidate) {
 	}
 }
 
-void SingleSampler::Add(Element e) {
+void BPSWR_SingleSampler::Add(Element e) {
 	//arrival of item e
 	cout << "[" << identity << "]" << "new item " << *(e.GetContent()) << " (p=" << e.GetPriority() << ") arrived" << endl;
 	//if there is currently no candidate item or the priority of e is larger than the one of the candidate
@@ -56,13 +56,13 @@ void SingleSampler::Add(Element e) {
 		//e becomes the candidate
 		cout << "[" << identity << "]" << "it's the new candidate" << endl;
 		candidate = e;
-		boost::function<void (Element*, bool)> expirer = boost::bind(&SingleSampler::ExpireElement, this, _1, _2);
+		boost::function<void (Element*, bool)> expirer = boost::bind(&BPSWR_SingleSampler::ExpireElement, this, _1, _2);
 		expire_candidate = boost::thread(expirer, &candidate, true);
 	}
 	//otherwise, nothing happens
 }
 
-Element SingleSampler::GetSample() {
+Element BPSWR_SingleSampler::GetSample() {
 	// cout << "fetching sample..." << endl;
 	//there is a candidate
 	if (!candidate.IsExpired()) {
@@ -80,6 +80,6 @@ Element SingleSampler::GetSample() {
 	return candidate;
 }
 
-int SingleSampler::GetIdentity() {
+int BPSWR_SingleSampler::GetIdentity() {
 	return identity;
 }

@@ -1,26 +1,26 @@
-#include "Sampler.h"
-#include "SingleSampler.h"
+#include "BPSWR_Sampler.h"
+#include "BPSWR_SingleSampler.h"
 #include "Element.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
-Sampler::Sampler(int samplesize, long int ws) {
+BPSWR_Sampler::BPSWR_Sampler(int samplesize, long int ws) {
 	window_size = ws;
 	k = samplesize;
 	generator.seed(static_cast<unsigned int>(time(0)));
 	distribution = boost::random::uniform_int_distribution<>(0, 10000);
-	singlesamplers = vector<SingleSampler *>(k);
+	singlesamplers = vector<BPSWR_SingleSampler *>(k);
 	for (int i = 0; i < k; ++i)
 	{
-		auto s = new SingleSampler(i, window_size);
+		auto s = new BPSWR_SingleSampler(i, window_size);
 		singlesamplers[i] = s;
 	}
-	cout << "sampler created with k=" << k << endl;
+	cout << "BPSWR_Sampler created with k=" << k << endl;
 }
 
-vector<Element> Sampler::GetSample() {
+vector<Element> BPSWR_Sampler::GetSample() {
 	auto sample = vector<Element>();
 	for (int i = 0; i < k; ++i)
 	{
@@ -36,7 +36,7 @@ vector<Element> Sampler::GetSample() {
 	return sample;
 }
 
-void Sampler::Add(string* content) {
+void BPSWR_Sampler::Add(string* content) {
 	cout << "added element " << *content << endl;
 	for (int i = 0; i < k; ++i)
 	{
@@ -46,6 +46,6 @@ void Sampler::Add(string* content) {
 	}
 }
 
-double Sampler::GetRandom() {
+double BPSWR_Sampler::GetRandom() {
 	return (double)distribution(generator)/(double)10000;
 }

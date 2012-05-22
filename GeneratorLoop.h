@@ -1,7 +1,7 @@
 #ifndef GENERATOR_LOOP_H
 #define GENERATOR_LOOP_H
 
-#include "Sampler.h"
+#include "BPSWR_Sampler.h"
 #include "Element.h"
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
@@ -10,10 +10,10 @@
 
 class GeneratorLoop {
 	public:
-		GeneratorLoop(Sampler * s, boost::mutex* mutex);
+		GeneratorLoop(BPSWR_Sampler * s, boost::mutex* mutex);
 		void operator()();
 	private:
-		Sampler* sampler;
+		BPSWR_Sampler* sampler;
 		boost::mutex* lock;
 		vector<string> contents;
 		vector<string> created_elements;

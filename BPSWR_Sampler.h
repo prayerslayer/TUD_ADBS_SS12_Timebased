@@ -1,22 +1,22 @@
-#ifndef SAMPLER_H
-#define SAMPLER_H
+#ifndef BPSWR_SAMPLER_H
+#define BPSWR_SAMPLER_H
 
 #include "Element.h"
 #include <vector>
 #include <string>
-#include "SingleSampler.h"
+#include "BPSWR_SingleSampler.h"
 
 using namespace std;
 
-class Sampler {
+class BPSWR_Sampler {
 	public:
-		Sampler(int samplesize, long int ws);
+		BPSWR_Sampler(int samplesize, long int ws);
 		void Add(string* e);
 		vector<Element> GetSample();
 	private:
 		int k;
 		long int window_size;
-		vector<SingleSampler *> singlesamplers;
+		vector<BPSWR_SingleSampler *> singlesamplers;
 		boost::random::mt19937 generator;
 		boost::random::uniform_int_distribution<> distribution;
 		double GetRandom();

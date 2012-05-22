@@ -1,5 +1,5 @@
-#ifndef SINGLESAMPLER_H
-#define SINGLESAMPLER_H
+#ifndef BPSWR_SINGLESAMPLER_H
+#define BPSWR_SINGLESAMPLER_H
 
 #include <cstdlib>
 #include <boost/thread/thread.hpp>
@@ -7,9 +7,9 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
-class SingleSampler {
+class BPSWR_SingleSampler {
 	public:
-		SingleSampler(int id, long int ws);
+		BPSWR_SingleSampler(int id, long int ws);
 		void Add(Element e);	
 		void ExpireElement(Element* e, bool is_candidate);
 		Element GetSample();

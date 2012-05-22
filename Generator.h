@@ -7,7 +7,7 @@
 #include <boost/thread/thread.hpp>
 #include "Element.h"
 #include "GeneratorLoop.h"
-#include "Sampler.h"
+#include "BPSWR_Sampler.h"
 using namespace std;
 
 class Generator {
@@ -18,10 +18,10 @@ class Generator {
 		void Pause();
 		void Stop();
 		bool IsRunning();
-		void SetSampler(Sampler* s);
+		void SetSampler(BPSWR_Sampler* s);
 	private:
 		boost::thread worker;
-		Sampler* sampler;
+		BPSWR_Sampler* sampler;
 };
 
 #endif

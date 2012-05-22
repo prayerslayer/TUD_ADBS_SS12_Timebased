@@ -1,5 +1,5 @@
 #include "Generator.h"
-#include "Sampler.h"
+#include "BPSWR_Sampler.h"
 #include "GeneratorLoop.h"
 #include "Element.h"
 #include <ctime>
@@ -20,7 +20,7 @@ Generator::Generator() {
 
 // setter
 
-void Generator::SetSampler(Sampler* s) {
+void Generator::SetSampler(BPSWR_Sampler* s) {
 	sampler = s;
 }
 

@@ -14,7 +14,7 @@
 #include <string>
 #include "Element.h"
 #include "Generator.h"
-#include "Sampler.h"
+#include "BPSWR_Sampler.h"
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/thread/thread.hpp>
 
@@ -24,7 +24,7 @@ int main() {
 
 	int k = 5;
 	long int ws = 5000;
-	auto sampler = new Sampler(k, ws);
+	auto sampler = new BPSWR_Sampler(k, ws);
 	auto generator =  new Generator();
 	generator->SetSampler(sampler);
 	cout << "Generator start" << endl;
