@@ -34,7 +34,15 @@ bool Element::operator==(const Element &other) const {
 }
 
 bool Element::operator!=(const Element &other) const {
-	return false;
+	return (timestamp != other.GetTimestamp());
+}
+
+bool Element::operator<(const Element &other) const {
+	return priority < other.GetPriority();
+}
+
+bool Element::operator>(const Element &other) const {
+	return priority > other.GetPriority();
 }
 
 //setters

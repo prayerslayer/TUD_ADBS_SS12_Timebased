@@ -18,6 +18,8 @@ class Element {
 		void SetExpired(bool expired);
 		bool operator==(const Element &other) const;
 		bool operator!=(const Element &other) const;
+		bool operator<(const Element &other) const;
+		bool operator>(const Element &other) const;
 	private:
 		double priority;
 		string* content;
