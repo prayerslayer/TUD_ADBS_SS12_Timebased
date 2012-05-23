@@ -45,10 +45,11 @@ void GeneratorLoop::operator()() {
 		if (sample.size() > 0) {
 			for (int i = 0; i < sample.size(); ++i)
 			{
-				cout << sample[i].GetPriority() << endl;
-				cout << sample[i].GetTimestamp() << endl;
-				cout << sample[i].GetContent() << endl;
-				cout << " === " << *(sample[i].GetContent()) << " === " << endl;
+                Element element = sample.at(i);
+				cout << element.GetPriority() << endl;
+				cout << element.GetTimestamp() << endl;
+				cout << element.GetContent() << endl;
+				cout << " === " << *(element.GetContent()) << " === " << endl;
 			}
 		}
 		else
