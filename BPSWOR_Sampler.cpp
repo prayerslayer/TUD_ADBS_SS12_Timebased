@@ -50,7 +50,24 @@ void BPSWOR_Sampler::Add(string* content) {
 }
 
 vector<Element> BPSWOR_Sampler::GetSample() {
-
+	auto union_vector = vector<Element>();
+	merge(candidates.begin(), candidates.end(), tests.begin(), tests.end(), union_vector.begin());
+	sort(union_vector.begin(), union_vector.end());
+	union_vector.erase(union_vector.begin()+sample_size, union_vector.end());
+	//union vektor ist jetzt top-k(Cand U Test)
+	//für jedes element in union vektor schauen, ob es in candidaten vektor drin ist
+	auto del_indexes = vector<int>();
+	for (int i = 0; i < union_vector.size(); ++i) {
+		Element element = union_vector[i];
+		if ( !binary_search( candidates.begin(), candidates.end(), element) ) {
+			del_indexes.push_back(i);
+		}
+	}
+	for (int i = 0; i < del_indexes.size(); ++i)
+	{
+		union_vector.erase(union_vector.begin()+i);
+	}
+	return union_vector;
 }
 
 double BPSWOR_Sampler::GetRandom() {

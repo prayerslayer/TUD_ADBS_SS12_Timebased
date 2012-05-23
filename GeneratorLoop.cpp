@@ -45,6 +45,9 @@ void GeneratorLoop::operator()() {
 		if (sample.size() > 0) {
 			for (int i = 0; i < sample.size(); ++i)
 			{
+				cout << sample[i].GetPriority() << endl;
+				cout << sample[i].GetTimestamp() << endl;
+				cout << sample[i].GetContent() << endl;
 				cout << " === " << *(sample[i].GetContent()) << " === " << endl;
 			}
 		}
