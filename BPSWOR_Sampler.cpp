@@ -33,8 +33,8 @@ void BPSWOR_Sampler::Add(string* content) {
 
 	if (size == 0) {
 		candidates.push_back(mew);
-		boost::function<void (Element*, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
-		boost::thread(expirer, &candidates[0], true);
+		boost::function<void (long int, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
+		boost::thread(expirer, mew.GetTimestamp(), true);
 		return;
 	}
 
@@ -43,10 +43,10 @@ void BPSWOR_Sampler::Add(string* content) {
 		candidates.pop_back();
 	}
 	//sortiert einfügen
-	vector<Element>::iterator upper(candidates.begin(), candidates.end(), mew);
+	vector<Element>::iterator upper = upper_bound(candidates.begin(), candidates.end(), mew);
 	candidates.insert(upper-1, mew);
-	boost::function<void (Element*, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
-	boost::thread(expirer, &candidates[int(upper-candidates.begin())-1], true);
+	boost::function<void (long int, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
+	boost::thread(expirer, mew.GetTimestamp(), true);
 }
 
 vector<Element> BPSWOR_Sampler::GetSample() {
@@ -57,10 +57,33 @@ double BPSWOR_Sampler::GetRandom() {
 	return (double)distribution(generator)/(double)10000;
 }
 
-void BPSWOR_Sampler::ExpireElement(Element* e, bool is_candidate) {
-	int timestamp_copy = e->GetTimestamp();
+void BPSWOR_Sampler::ExpireElement(long int timestamp, bool is_candidate) {
 	//wait until window is over
 	boost::this_thread::sleep(boost::posix_time::milliseconds(window_size));
 	//check if item was replaced
-	cout << "item " << timestamp_copy << " expired" << endl;
+	cout << "item " << timestamp << " expired" << endl;
+	//TODO hier müsste noch ein lock hin
+	Element pseudo(NULL);
+	pseudo.SetTimestamp(timestamp);
+	if (is_candidate) {
+		//find element
+		auto position = find( candidates.begin(), candidates.end(), pseudo);
+		int pos = int(position - candidates.begin());
+		Element mew = candidates[pos];
+		//remove from candidates
+		candidates.erase(position);
+		//add to tests
+		vector<Element>::iterator upper = upper_bound(tests.begin(), tests.end(), mew);
+		tests.insert(upper-1, mew);
+		//expire
+		boost::function<void (long int, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
+		boost::thread(expirer, timestamp, false);
+	}
+	else {
+		// is test
+		//remove from tests
+		auto position = find( tests.begin(), tests.end(), pseudo);
+		int pos = int(position - tests.begin());
+		tests.erase(position);
+	}
 }

@@ -20,7 +20,7 @@ class BPSWOR_Sampler : public ISampler {
 		vector<Element> candidates;
 		vector<Element> tests;
 		double GetRandom();
-		void ExpireElement(Element* e, bool is_candidate);
+		void ExpireElement(long int timestamp, bool is_candidate);
 };
 
 #endif
