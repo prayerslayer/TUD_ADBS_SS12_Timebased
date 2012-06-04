@@ -9,13 +9,9 @@ Hier entsteht eine Implementierung von Bounded-Space Priority Sampling (mit und 
 * Schnittstellen für Sampler implementiert
 * Rudimentäre Kommandozeile ist vorhanden
 
-## Fragen
-
-* Wie am Besten Sets verwenden?
-
 ## TODO
 
-* Debuggen (NullPointer bei GetContent() für BPSWR)
-* BPSWOR implementieren
-* Kommandozeile verschönern
+* Debuggen
+* (Kommandozeile verschönern)
 * (Alles mit template classes refactoren)
+* (Unit tests schreiben)
