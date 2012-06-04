@@ -30,8 +30,6 @@ GeneratorLoop::GeneratorLoop(ISampler* s, boost::mutex* mutex) {
 	{
 		cout << "\tContent " << i << ": " << contents.at(i) << endl;
 	}
-	created_elements = vector<string>();
-    created_elements.reserve(100);
 }
 
 void GeneratorLoop::operator()() {
@@ -39,20 +37,10 @@ void GeneratorLoop::operator()() {
 	while ( !(lock->try_lock()) ) {
 		cout << "zzzzzzzz" << endl;
 		boost::this_thread::sleep(boost::posix_time::seconds(rand()%10+1));
-		string mew = contents.at(rand()%10);
 		cout << "sleep is over" << endl;
-        cout << "new element = " << mew << endl;
-		created_elements.push_back(mew); //prevent garbage collector from eating the element
-        cout << "created elements: " << created_elements.size() << endl;
-        cout << "last element: " << created_elements.at(created_elements.size() - 1) << endl;
-        cout << "& of last element: " << &created_elements.at(created_elements.size() - 1) << endl;
-		sampler->Add(&created_elements.at(created_elements.size()-1));
+		sampler->Add(&contents.at(rand()%10));
 		cout << "fetching sample..." << endl;
 		vector<Element> sample = sampler->GetSample();
-        
-        for (int i = 0; i < created_elements.size(); ++i) {
-            cout << "& of created element #" << i << ": " << &created_elements.at(i) << endl;
-        }
         
 		cout << "SAMPLE (" << sample.size() << "): " << endl;
 		if (sample.size() > 0) {

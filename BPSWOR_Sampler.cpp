@@ -53,8 +53,6 @@ void BPSWOR_Sampler::Add(string* content) {
             
         }
         cout << "new candidate size: " << candidates.size() << endl;
-        cout << "front ts: " << candidates.front().GetTimestamp() << endl;
-        cout << "back ts: " << candidates.back().GetTimestamp() << endl;
         boost::function<void (long int, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
 		boost::thread(expirer, mew.GetTimestamp(), true);
 	}
