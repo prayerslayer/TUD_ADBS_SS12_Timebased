@@ -5,6 +5,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include "Element.h"
+#include <boost/thread/thread.hpp>
 #include <vector>
 
 class BPSWOR_Sampler : public ISampler {
@@ -21,6 +22,7 @@ class BPSWOR_Sampler : public ISampler {
 		vector<Element> tests;
 		double GetRandom();
 		void ExpireElement(long int timestamp, bool is_candidate);
+        boost::mutex threadlock;
 };
 
 #endif
