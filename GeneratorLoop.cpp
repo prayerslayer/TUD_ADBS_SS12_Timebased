@@ -28,7 +28,7 @@ GeneratorLoop::GeneratorLoop(ISampler* s, boost::mutex* mutex) {
 	contents[9] = "ICMP";
 	for (int i = 0; i < contents.size(); ++i)
 	{
-		cout << "Content " << i << ": " << contents.at(i) << endl;
+		cout << "\tContent " << i << ": " << contents.at(i) << endl;
 	}
 	created_elements = vector<string>();
 }
@@ -39,21 +39,24 @@ void GeneratorLoop::operator()() {
 		cout << "zzzzzzzz" << endl;
 		boost::this_thread::sleep(boost::posix_time::seconds(rand()%10+1));
 		string mew = contents[rand()%10];
+		cout << "sleep is over" << endl;
 		created_elements.push_back(mew); //prevent garbage collector from eating the element
 		sampler->Add(&created_elements[created_elements.size()-1]);
+		cout << "fetching sample..." << endl;
 		vector<Element> sample = sampler->GetSample();
+		cout << "SAMPLE: " << endl;
 		if (sample.size() > 0) {
 			for (int i = 0; i < sample.size(); ++i)
 			{
                 Element element = sample.at(i);
-				cout << element.GetPriority() << endl;
-				cout << element.GetTimestamp() << endl;
-				cout << element.GetContent() << endl;
-				cout << " === " << *(element.GetContent()) << " === " << endl;
+				cout << "\t" << *(element.GetContent()) << endl;
+				cout << "\t\tp =" << element.GetPriority() << endl;
+				cout << "\t\tt =" << element.GetTimestamp() << endl;
+				cout << "\t\t&c=" << element.GetContent() << endl;
 			}
 		}
 		else
-			cout << " === empty sample === " << endl;
+			cout << "\t(empty)" << endl;
 	}
 	lock->unlock();
 }
