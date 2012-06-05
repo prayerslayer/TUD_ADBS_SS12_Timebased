@@ -35,11 +35,11 @@ GeneratorLoop::GeneratorLoop(ISampler* s, boost::mutex* mutex) {
 void GeneratorLoop::operator()() {
 	cout << "starting work" << endl;
 	while ( !(lock->try_lock()) ) {
-		cout << "zzzzzzzz" << endl;
+		//cout << "zzzzzzzz" << endl;
 		boost::this_thread::sleep(boost::posix_time::seconds(rand()%10+1));
-		cout << "sleep is over" << endl;
+		//cout << "sleep is over" << endl;
 		sampler->Add(&contents.at(rand()%10));
-		cout << "fetching sample..." << endl;
+		//cout << "fetching sample..." << endl;
 		vector<Element> sample = sampler->GetSample();
         
 		cout << "SAMPLE (" << sample.size() << "): " << endl;

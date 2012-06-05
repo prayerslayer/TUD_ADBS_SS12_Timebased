@@ -29,13 +29,15 @@ void BPSWOR_Sampler::Add(string* content) {
 	Element mew = Element(content);
 	double priority = GetRandom();
 	mew.SetPriority(priority);
-	cout << "new element has p=" << priority << endl;
+	cout << "* * * * * * * * * * * * * * * " << endl;
+	cout << "* new element has p=" << priority << "  *" << endl;
+	cout << "* * * * * * * * * * * * * * * " << endl;
 	//in kandidaten einfügen (oder nicht)
 	int size = candidates.size();
 	if (size == sample_size && candidates.at(size-1).GetPriority() < priority) {
 		//mit geringster priorität löschen
 		candidates.pop_back();
-		cout << "deleted candidate with smallest p" << endl;
+		//cout << "deleted candidate with smallest p" << endl;
 	}
 	if (size >= 0 && size < sample_size) {
 		//sortiert einfügen
@@ -44,15 +46,15 @@ void BPSWOR_Sampler::Add(string* content) {
         else {
             vector<Element>::iterator upper = upper_bound(candidates.begin(), candidates.end(), mew);
             int upper_pos = int(upper-candidates.begin());
-            cout << "size of candidates: " << candidates.size() << endl;
-            cout << "position to insert: " << upper_pos << endl;
+            //cout << "size of candidates: " << candidates.size() << endl;
+            //cout << "position to insert: " << upper_pos << endl;
             if (upper_pos > 0)
                 candidates.insert(upper-1, mew);
             else 
                 candidates.insert(candidates.begin(), mew);
             
         }
-        cout << "new candidate size: " << candidates.size() << endl;
+        //cout << "new candidate size: " << candidates.size() << endl;
         boost::function<void (long int, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
 		boost::thread(expirer, mew.GetTimestamp(), true);
 	}
@@ -99,38 +101,38 @@ void BPSWOR_Sampler::ExpireElement(long int timestamp, bool is_candidate) {
 	pseudo.SetTimestamp(timestamp);
 	if (is_candidate) {
 		//find element
-		cout << "item was candidate!" << endl;
+		//cout << "item was candidate!" << endl;
 		auto position = find( candidates.begin(), candidates.end(), pseudo);
 		int pos = int(position - candidates.begin());
 		Element mew = candidates.at(pos);
-		cout << "item is at " << pos << endl;
+		//cout << "item is at " << pos << endl;
 		//remove from candidates
 		candidates.erase(position);
-		cout << "item deleted from candidates" << endl;
+		//cout << "item deleted from candidates" << endl;
 		//add to tests
 		if (tests.size() > 0) {
 			//sortiert einfügen, wenn nicht leer
 			vector<Element>::iterator upper = upper_bound(tests.begin(), tests.end(), mew);
             int testpos = int(upper-tests.begin());
-            cout << "tests size: " << tests.size() << endl;
-            cout << "insert to : " << testpos << endl;
+            //cout << "tests size: " << tests.size() << endl;
+            //cout << "insert to : " << testpos << endl;
 			tests.insert(upper-1, mew);
 		}
 		else
 			tests.push_back(mew);
 
-		cout << "item added to tests" << endl;
+		//cout << "item added to tests" << endl;
 		//expire
 		boost::function<void (long int, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
 		boost::thread(expirer, timestamp, false);
 	}
 	else {
 		// is test
-		cout << "item was test item!!" << endl;
+		//cout << "item was test item!!" << endl;
 		//remove from tests
 		auto position = find( tests.begin(), tests.end(), pseudo);
 		int pos = int(position - tests.begin());
-        cout << "item is at " << pos << endl;
+        //cout << "item is at " << pos << endl;
 		tests.erase(position);
 	}
     threadlock.unlock();
