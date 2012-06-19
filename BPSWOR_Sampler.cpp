@@ -55,18 +55,22 @@ void BPSWOR_Sampler::Add(string* content) {
             
         }
         //cout << "new candidate size: " << candidates.size() << endl;
-        boost::function<void (long int, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
-		boost::thread(expirer, mew.GetTimestamp(), true);
+        boost::function<void (bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1);
+		boost::thread(expirer, true);
 	}
 }
 
 vector<Element> BPSWOR_Sampler::GetSample() {
-	auto union_vector = vector<Element>(tests.size() + candidates.size());
-	merge(candidates.begin(), candidates.end(), tests.begin(), tests.end(), union_vector.begin());
+	//make copy of candidates and tests
+	vector<Element> cand_copy( candidates.begin(), candidates.end() );
+	vector<Element> test_copy( tests.begin(), tests.end() );
+	//make top-k(union(candidates, tests)) intersect tests
+	auto union_vector = vector<Element>(test_copy.size() + cand_copy.size());
+	merge(cand_copy.begin(), cand_copy.end(), test_copy.begin(), test_copy.end(), union_vector.begin());
 	sort(union_vector.begin(), union_vector.end());
     
-	if (union_vector.size()>sample_size){
-        union_vector.erase(union_vector.begin()+sample_size, union_vector.end());
+	if (union_vector.size() > sample_size){
+        union_vector.erase( union_vector.begin() + sample_size, union_vector.end() );
     }
     
 	//union vektor ist jetzt top-k(Cand U Test)
@@ -74,7 +78,7 @@ vector<Element> BPSWOR_Sampler::GetSample() {
 	auto del_indexes = vector<int>();
 	for (int i = 0; i < union_vector.size(); ++i) {
 		Element element = union_vector.at(i);
-		if ( !binary_search( candidates.begin(), candidates.end(), element) ) {
+		if ( !binary_search( cand_copy.begin(), cand_copy.end(), element) ) {
 			del_indexes.push_back(i);
 		}
 	}
@@ -89,51 +93,60 @@ double BPSWOR_Sampler::GetRandom() {
 	return (double)distribution(generator)/(double)10000;
 }
 
-void BPSWOR_Sampler::ExpireElement(long int timestamp, bool is_candidate) {
-	cout << "starting timer for item with t=" << timestamp << endl;
+void BPSWOR_Sampler::ExpireElement( bool is_candidate ) {
+	cout << "starting timer" << endl;
 	//wait until window is over
-	boost::this_thread::sleep(boost::posix_time::milliseconds(window_size));
+	boost::this_thread::sleep(boost::posix_time::milliseconds( window_size ));
 	//check if item was replaced
-	cout << "item with t=" << timestamp << " expired" << endl;
-	while (!threadlock.try_lock()) 
+	cout << "item expired" << endl;
+	while ( !threadlock.try_lock() ) 
         /*busy waiting*/;
-	Element pseudo(NULL);
-	pseudo.SetTimestamp(timestamp);
-	if (is_candidate) {
-		//find element
-		//cout << "item was candidate!" << endl;
-		auto position = find( candidates.begin(), candidates.end(), pseudo);
-		int pos = int(position - candidates.begin());
-		Element mew = candidates.at(pos);
-		//cout << "item is at " << pos << endl;
+	if ( is_candidate ) {
+		//find element with lowest timestamp
+		Element mew( NULL );
+		mew.SetTimestamp( 0 );
+		int mew_index = 0;
+		for (int i = 0; i < candidates.size(); ++i)
+		{
+			if ( candidates.at( i ).GetTimestamp() < mew.GetTimestamp() ) {
+				mew = candidates.at( i );
+				mew_index = i;
+			}
+		}
 		//remove from candidates
-		candidates.erase(position);
-		//cout << "item deleted from candidates" << endl;
+		candidates.erase( candidates.begin() + mew_index );
 		//add to tests
 		if (tests.size() > 0) {
 			//sortiert einfügen, wenn nicht leer
-			vector<Element>::iterator upper = upper_bound(tests.begin(), tests.end(), mew);
-            int testpos = int(upper-tests.begin());
+			vector<Element>::iterator upper = upper_bound( tests.begin(), tests.end(), mew );
+            int testpos = int( upper-tests.begin() );
             //cout << "tests size: " << tests.size() << endl;
             //cout << "insert to : " << testpos << endl;
-			tests.insert(upper-1, mew);
+			tests.insert( upper-1, mew );
 		}
 		else
-			tests.push_back(mew);
+			tests.push_back( mew );
 
 		//cout << "item added to tests" << endl;
 		//expire
-		boost::function<void (long int, bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1, _2);
-		boost::thread(expirer, timestamp, false);
+		boost::function<void (bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1);
+		boost::thread( expirer, false );
 	}
 	else {
 		// is test
-		//cout << "item was test item!!" << endl;
-		//remove from tests
-		auto position = find( tests.begin(), tests.end(), pseudo);
-		int pos = int(position - tests.begin());
-        //cout << "item is at " << pos << endl;
-		tests.erase(position);
+		// find element with lowest timestamp
+		Element mew( NULL );
+		mew.SetTimestamp( 0 );
+		int mew_index = 0;
+		for (int i = 0; i < tests.size(); ++i)
+		{
+			if ( tests.at( i ).GetTimestamp() < mew.GetTimestamp() ) {
+				mew = tests.at( i );
+				mew_index = i;
+			}
+		}
+		//delete from tests
+		tests.erase( tests.begin() + mew_index );
 	}
     threadlock.unlock();
 }

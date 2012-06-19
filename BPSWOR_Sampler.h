@@ -21,7 +21,7 @@ class BPSWOR_Sampler : public ISampler {
 		vector<Element> candidates;
 		vector<Element> tests;
 		double GetRandom();
-		void ExpireElement(long int timestamp, bool is_candidate);
+		void ExpireElement(bool is_candidate);
         boost::mutex threadlock;
 };
 
