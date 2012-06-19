@@ -24,8 +24,8 @@ using namespace std;
 
 int main() {
 
-	int k = 5;
-	long int ws = 5000;
+	int k = 2;
+	long int ws = 10000;
 	auto sampler = new BPSWOR_Sampler(k, ws);
 	auto generator =  new Generator();
 	generator->SetSampler(sampler);

@@ -61,9 +61,18 @@ void BPSWOR_Sampler::Add(string* content) {
 }
 
 vector<Element> BPSWOR_Sampler::GetSample() {
+    //lock lock lock
+    while ( !threadlock.try_lock() )
+        /* wait! */;
+    
 	//make copy of candidates and tests for thread safety
-	vector<Element> cand_copy( candidates.begin(), candidates.end() );
-	vector<Element> test_copy( tests.begin(), tests.end() );
+	vector<Element> cand_copy( candidates.size() );
+    copy( candidates.begin(), candidates.end(), cand_copy.begin() );
+	vector<Element> test_copy( tests.size() );
+    copy( tests.begin(), tests.end(), test_copy.begin() );
+    
+    threadlock.unlock();
+    
     cout << "candidates (" << cand_copy.size() << "), tests (" << test_copy.size() << ")" << endl;
     // union (cand, test)
     vector<Element> union_vector( cand_copy.size() + test_copy.size() );
@@ -82,6 +91,7 @@ vector<Element> BPSWOR_Sampler::GetSample() {
     for (int j = 0; j < deletions.size(); ++j) {
         union_vector.erase(union_vector.begin() + deletions.at(j) );
     }
+    
     return union_vector;
 }
 
@@ -97,6 +107,7 @@ void BPSWOR_Sampler::ExpireElement( bool is_candidate ) {
 	cout << "item expired" << endl;
 	while ( !threadlock.try_lock() ) 
         /*busy waiting*/;
+    
 	if ( is_candidate ) {
 		//find element with lowest timestamp
 		Element mew( NULL );
