@@ -44,16 +44,16 @@ void GeneratorLoop::operator()() {
         
 		cout << "SAMPLE (" << sample.size() << "): " << endl;
 		if (sample.size() > 0) {
-			for (int i = 0; i < sample.size(); ++i)
+			for (int i = 0; i < sample.size(); i++)
 			{
                 Element element = sample.at(i);
+                
 				cout << "\t\tp =" << element.GetPriority() << endl;
 				cout << "\t\tt =" << element.GetTimestamp() << endl;
-                cout << "\t\t& =" << &element << endl;
+                cout << "\t\t& =" << &sample.at(i) << endl;
 				cout << "\t\t&c=" << element.GetContent() << endl;
-                cout << "\t\tc =" << *(element.GetContent()) << endl; // TODO adresse des contents ändert sich wenn vektor größer wird.
-                cout << endl;
-			}
+                cout << "\t\tc =" << *(element.GetContent()) << endl;               			
+            }
 		}
 		else
 			cout << "\t(empty)" << endl;

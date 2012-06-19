@@ -61,32 +61,28 @@ void BPSWOR_Sampler::Add(string* content) {
 }
 
 vector<Element> BPSWOR_Sampler::GetSample() {
-	//make copy of candidates and tests
+	//make copy of candidates and tests for thread safety
 	vector<Element> cand_copy( candidates.begin(), candidates.end() );
 	vector<Element> test_copy( tests.begin(), tests.end() );
-	//make top-k(union(candidates, tests)) intersect tests
-	auto union_vector = vector<Element>(test_copy.size() + cand_copy.size());
-	merge(cand_copy.begin(), cand_copy.end(), test_copy.begin(), test_copy.end(), union_vector.begin());
-	sort(union_vector.begin(), union_vector.end());
-    
-	if (union_vector.size() > sample_size){
+    cout << "candidates (" << cand_copy.size() << "), tests (" << test_copy.size() << ")" << endl;
+    // union (cand, test)
+    vector<Element> union_vector( cand_copy.size() + test_copy.size() );
+    merge(cand_copy.begin(), cand_copy.end(), test_copy.begin(), test_copy.end(), union_vector.begin());
+    // top-k(union(cand, test))
+    sort( union_vector.begin(), union_vector.end() );
+    if ( union_vector.size() > sample_size )
         union_vector.erase( union_vector.begin() + sample_size, union_vector.end() );
+    // top-k(union(cand, test)) intersect candidates
+    vector<int> deletions;
+    for (int i = 0; i<union_vector.size(); ++i) {
+        Element temp = union_vector.at(i);
+        if ( find(test_copy.begin(), test_copy.end(), temp) != test_copy.end() )
+            deletions.push_back(i);
     }
-    
-	//union vektor ist jetzt top-k(Cand U Test)
-	//für jedes element in union vektor schauen, ob es in candidaten vektor drin ist
-	auto del_indexes = vector<int>();
-	for (int i = 0; i < union_vector.size(); ++i) {
-		Element element = union_vector.at(i);
-		if ( !binary_search( cand_copy.begin(), cand_copy.end(), element) ) {
-			del_indexes.push_back(i);
-		}
-	}
-	for (int i = 0; i < del_indexes.size(); ++i)
-	{
-		union_vector.erase(union_vector.begin()+i);
-	}
-	return union_vector;
+    for (int j = 0; j < deletions.size(); ++j) {
+        union_vector.erase(union_vector.begin() + deletions.at(j) );
+    }
+    return union_vector;
 }
 
 double BPSWOR_Sampler::GetRandom() {
