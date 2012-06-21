@@ -46,6 +46,9 @@ void GeneratorLoop::operator()() {
 		if (sample.size() > 0) {
 			for (int i = 0; i < sample.size(); i++)
 			{
+                if ( i > 0 )
+                    cout << "\t\t-----------------" << endl;
+                
                 Element element = sample.at(i);
                 
 				cout << "\t\tp =" << element.GetPriority() << endl;

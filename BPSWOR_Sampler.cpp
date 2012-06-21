@@ -75,6 +75,8 @@ vector<Element> BPSWOR_Sampler::GetSample() {
     
     cout << "candidates:" << endl;
     for (int i = 0; i < candidates.size(); i++) {
+        if ( i > 0 )
+            cout << "--------" << endl;
         cout << "\t p = " << candidates.at(i).GetPriority() << endl;
         cout << "\t t = " << candidates.at(i).GetTimestamp() << endl;
         cout << "\t&c = " << candidates.at(i).GetContent() << endl;
@@ -94,16 +96,17 @@ vector<Element> BPSWOR_Sampler::GetSample() {
     merge(cand_copy.begin(), cand_copy.end(), test_copy.begin(), test_copy.end(), union_vector.begin());
     // top-k(union(cand, test))
     sort( union_vector.begin(), union_vector.end() );
+    reverse (union_vector.begin(), union_vector.end() );
     if ( union_vector.size() > sample_size )
         union_vector.erase( union_vector.begin() + sample_size, union_vector.end() );
     // top-k(union(cand, test)) intersect candidates
     vector<int> deletions;
-    for (int i = 0; i<union_vector.size(); ++i) {
+    for (int i = 0; i<union_vector.size(); i++) {
         Element temp = union_vector.at(i);
-        if ( find(test_copy.begin(), test_copy.end(), temp) != test_copy.end() )
+        if ( binary_search(test_copy.begin(), test_copy.end(), temp) )
             deletions.push_back(i);
     }
-    for (int j = 0; j < deletions.size(); ++j) {
+    for (int j = 0; j < deletions.size(); j++) {
         union_vector.erase(union_vector.begin() + deletions.at(j) );
     }
     
@@ -124,53 +127,56 @@ void BPSWOR_Sampler::ExpireElement( bool is_candidate ) {
         /*busy waiting*/;
     
 	if ( is_candidate ) {
-		//find element with lowest timestamp
-		Element mew( NULL );
-		mew.SetTimestamp( LONG_MAX );
-		int mew_index = 0;
-		for (int i = 0; i < candidates.size(); i++)
-		{
-			if ( candidates.at( i ).GetTimestamp() < mew.GetTimestamp() ) {
-				mew = candidates.at( i );
-				mew_index = i;
-			}
-		}
-        cout << "expire candidate with p = " << mew.GetPriority() << endl; 
-		//remove from candidates
-		candidates.erase( candidates.begin() + mew_index );
-		//add to tests
-		if (tests.size() > 0) {
-			//sortiert einfügen, wenn nicht leer
-			vector<Element>::iterator upper = upper_bound( tests.begin(), tests.end(), mew );
-            //int testpos = int( upper-tests.begin() );
-            //cout << "tests size: " << tests.size() << endl;
-            //cout << "insert to : " << testpos << endl;
-			tests.insert( upper, mew );
-		}
-		else
-			tests.push_back( mew );
-
-		//cout << "item added to tests" << endl;
-		//expire
-		boost::function<void (bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1);
-		boost::thread( expirer, false );
-	}
+		//find candidate with lowest timestamp
+        if ( candidates.size() > 0 ) {
+            Element mew = candidates.at(0);
+            int mew_index = 0;
+            if ( candidates.size() > 1 ) {
+                for (int i = 1; i < candidates.size(); i++) {
+                    if ( candidates.at( i ).GetTimestamp() < mew.GetTimestamp() ) {
+                        mew = candidates.at( i );
+                        mew_index = i;
+                    }
+                }
+            }
+            // mew = candidate with lowest timestamp
+            
+            cout << "expire candidate with p = " << mew.GetPriority() << endl; 
+            //remove from candidates
+            candidates.erase( candidates.begin() + mew_index );
+            //add to tests
+            if (tests.size() > 0) {
+                //sortiert einfügen, wenn nicht leer
+                vector<Element>::iterator upper = upper_bound( tests.begin(), tests.end(), mew );
+                tests.insert( upper, mew );
+            }
+            else
+                tests.push_back( mew );
+            
+            //expire
+            boost::function<void (bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1);
+            boost::thread( expirer, false );
+        }    
+        
+    }
 	else {
 		// is test
-		// find element with lowest timestamp
-		Element mew( NULL );
-		mew.SetTimestamp( LONG_MAX );
-		int mew_index = 0;
-		for (int i = 0; i < tests.size(); ++i)
-		{
-			if ( tests.at( i ).GetTimestamp() < mew.GetTimestamp() ) {
-				mew = tests.at( i );
-				mew_index = i;
-			}
-		}
-        cout << "expire test with p = " << mew.GetPriority() << endl;
-		//delete from tests
-		tests.erase( tests.begin() + mew_index );
-	}
+        if ( tests.size() > 0 ) {
+            Element mew = tests.at(0);
+            int mew_index = 0;
+            if ( tests.size() > 1 ) {
+                for (int i = 1; i < tests.size(); i++) {
+                    if ( tests.at( i ).GetTimestamp() < mew.GetTimestamp() ) {
+                        mew = tests.at( i );
+                        mew_index = i;
+                    }
+                }
+            }
+            //mew = test with lowest timestamp
+            cout << "expire test with p = " << mew.GetPriority() << endl;
+            //delete from tests
+            tests.erase( tests.begin() + mew_index );
+        }
+    }
     threadlock.unlock();
 }
