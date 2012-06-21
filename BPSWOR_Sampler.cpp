@@ -11,6 +11,7 @@
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#include <climits>
 
 using namespace std;
 
@@ -32,6 +33,11 @@ void BPSWOR_Sampler::Add(string* content) {
 	cout << "* * * * * * * * * * * * * * * " << endl;
 	cout << "* new element has p=" << priority << "  *" << endl;
 	cout << "* * * * * * * * * * * * * * * " << endl;
+    
+    //lock!
+    while ( !threadlock.try_lock() )
+        /*warten*/ ;
+    
 	//in kandidaten einfügen (oder nicht)
 	int size = candidates.size();
 	if (size == sample_size && candidates.at(size-1).GetPriority() < priority) {
@@ -46,18 +52,20 @@ void BPSWOR_Sampler::Add(string* content) {
         else {
             vector<Element>::iterator upper = upper_bound(candidates.begin(), candidates.end(), mew);
             int upper_pos = int(upper-candidates.begin());
-            //cout << "size of candidates: " << candidates.size() << endl;
-            //cout << "position to insert: " << upper_pos << endl;
+            cout << "size of candidates: " << candidates.size() << endl;
+            cout << "position to insert: " << upper_pos << endl;
             if (upper_pos > 0)
-                candidates.insert(upper-1, mew);
+                candidates.insert(upper, mew);
             else 
                 candidates.insert(candidates.begin(), mew);
+            cout << "size of cands after insert: " << candidates.size() << endl;
             
         }
         //cout << "new candidate size: " << candidates.size() << endl;
         boost::function<void (bool)> expirer = boost::bind(&BPSWOR_Sampler::ExpireElement, this, _1);
 		boost::thread(expirer, true);
 	}
+    threadlock.unlock();
 }
 
 vector<Element> BPSWOR_Sampler::GetSample() {
@@ -65,7 +73,14 @@ vector<Element> BPSWOR_Sampler::GetSample() {
     while ( !threadlock.try_lock() )
         /* wait! */;
     
-	//make copy of candidates and tests for thread safety
+    cout << "candidates:" << endl;
+    for (int i = 0; i < candidates.size(); i++) {
+        cout << "\t p = " << candidates.at(i).GetPriority() << endl;
+        cout << "\t t = " << candidates.at(i).GetTimestamp() << endl;
+        cout << "\t&c = " << candidates.at(i).GetContent() << endl;
+    }
+    
+	//make copy of candidates and tesƒts for thread safety
 	vector<Element> cand_copy( candidates.size() );
     copy( candidates.begin(), candidates.end(), cand_copy.begin() );
 	vector<Element> test_copy( tests.size() );
@@ -111,25 +126,26 @@ void BPSWOR_Sampler::ExpireElement( bool is_candidate ) {
 	if ( is_candidate ) {
 		//find element with lowest timestamp
 		Element mew( NULL );
-		mew.SetTimestamp( 0 );
+		mew.SetTimestamp( LONG_MAX );
 		int mew_index = 0;
-		for (int i = 0; i < candidates.size(); ++i)
+		for (int i = 0; i < candidates.size(); i++)
 		{
 			if ( candidates.at( i ).GetTimestamp() < mew.GetTimestamp() ) {
 				mew = candidates.at( i );
 				mew_index = i;
 			}
 		}
+        cout << "expire candidate with p = " << mew.GetPriority() << endl; 
 		//remove from candidates
 		candidates.erase( candidates.begin() + mew_index );
 		//add to tests
 		if (tests.size() > 0) {
 			//sortiert einfügen, wenn nicht leer
 			vector<Element>::iterator upper = upper_bound( tests.begin(), tests.end(), mew );
-            int testpos = int( upper-tests.begin() );
+            //int testpos = int( upper-tests.begin() );
             //cout << "tests size: " << tests.size() << endl;
             //cout << "insert to : " << testpos << endl;
-			tests.insert( upper-1, mew );
+			tests.insert( upper, mew );
 		}
 		else
 			tests.push_back( mew );
@@ -143,7 +159,7 @@ void BPSWOR_Sampler::ExpireElement( bool is_candidate ) {
 		// is test
 		// find element with lowest timestamp
 		Element mew( NULL );
-		mew.SetTimestamp( 0 );
+		mew.SetTimestamp( LONG_MAX );
 		int mew_index = 0;
 		for (int i = 0; i < tests.size(); ++i)
 		{
@@ -152,6 +168,7 @@ void BPSWOR_Sampler::ExpireElement( bool is_candidate ) {
 				mew_index = i;
 			}
 		}
+        cout << "expire test with p = " << mew.GetPriority() << endl;
 		//delete from tests
 		tests.erase( tests.begin() + mew_index );
 	}
